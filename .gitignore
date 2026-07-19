@@ -7,3 +7,13 @@ qa/
 build/
 docs/*.clean.docx
 docs/AI产品项目标准推进SOP.docx
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+secrets/
+examples/generated_project.json

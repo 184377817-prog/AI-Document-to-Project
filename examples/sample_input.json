@@ -1,0 +1,45 @@
+{
+  "project_name": "新品发布计划",
+  "rows": [
+    {
+      "module": "筹备阶段",
+      "card": "内容准备",
+      "task": "完成发布文案",
+      "owner": "内容负责人",
+      "start_date": "2026-07-01",
+      "end_date": "2026-07-03",
+      "source_sheet": "发布计划",
+      "source_row": 5
+    },
+    {
+      "module": "筹备阶段",
+      "card": "内容准备",
+      "task": "制作视觉素材",
+      "owner": "设计负责人",
+      "start_date": "2026-07-02",
+      "end_date": "2026-07-06",
+      "source_sheet": "发布计划",
+      "source_row": 6
+    },
+    {
+      "module": "发布阶段",
+      "card": "渠道执行",
+      "task": "配置发布渠道",
+      "owner": "运营负责人",
+      "start_date": "2026-07-07",
+      "end_date": "2026-07-08",
+      "source_sheet": "发布计划",
+      "source_row": 12
+    },
+    {
+      "module": "发布阶段",
+      "card": "数据复盘",
+      "task": "汇总首周数据",
+      "owner": "数据负责人",
+      "start_date": "2026-07-15",
+      "end_date": "2026-07-16",
+      "source_sheet": "发布计划",
+      "source_row": 18
+    }
+  ]
+}

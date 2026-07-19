@@ -1,0 +1,95 @@
+{
+  "schema_version": "demo-1.0",
+  "project": {
+    "name": "新品发布计划",
+    "modules": [
+      {
+        "id": "module-01",
+        "name": "筹备阶段",
+        "cards": [
+          {
+            "id": "module-01-card-01",
+            "name": "内容准备",
+            "tasks": [
+              {
+                "id": "task-0001",
+                "title": "完成发布文案",
+                "owner": "内容负责人",
+                "start_date": "2026-07-01",
+                "end_date": "2026-07-03",
+                "notes": null,
+                "source_ref": {
+                  "sheet": "发布计划",
+                  "row": 5
+                }
+              },
+              {
+                "id": "task-0002",
+                "title": "制作视觉素材",
+                "owner": "设计负责人",
+                "start_date": "2026-07-02",
+                "end_date": "2026-07-06",
+                "notes": null,
+                "source_ref": {
+                  "sheet": "发布计划",
+                  "row": 6
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "module-02",
+        "name": "发布阶段",
+        "cards": [
+          {
+            "id": "module-02-card-01",
+            "name": "渠道执行",
+            "tasks": [
+              {
+                "id": "task-0003",
+                "title": "配置发布渠道",
+                "owner": "运营负责人",
+                "start_date": "2026-07-07",
+                "end_date": "2026-07-08",
+                "notes": null,
+                "source_ref": {
+                  "sheet": "发布计划",
+                  "row": 12
+                }
+              }
+            ]
+          },
+          {
+            "id": "module-02-card-02",
+            "name": "数据复盘",
+            "tasks": [
+              {
+                "id": "task-0004",
+                "title": "汇总首周数据",
+                "owner": "数据负责人",
+                "start_date": "2026-07-15",
+                "end_date": "2026-07-16",
+                "notes": null,
+                "source_ref": {
+                  "sheet": "发布计划",
+                  "row": 18
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "quality": {
+    "source_rows": 4,
+    "mapped_tasks": 4,
+    "coverage_rate": 1.0,
+    "default_module_rows": 0,
+    "default_card_rows": 0,
+    "warning_count": 0
+  },
+  "warnings": []
+}

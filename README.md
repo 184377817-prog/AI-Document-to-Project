@@ -1,56 +1,129 @@
 # AI Document to Project
 
-一套将零散的 AI 产品经验整理为可执行项目文档的方法与示例，覆盖项目立项、方案设计、Agent 设计、开发测试、上线复盘等关键环节。
+> 将 Excel 等业务文档转换为可预览、可校验、可创建的结构化项目计划。
 
-本仓库展示的不只是最终 Word 文档，也保留了可复现的 Python 生成源码和流程图资产，便于查看文档工程化的实现方式。
-
-## 项目内容
-
-| 内容 | 说明 |
-| --- | --- |
-| [AI 产品项目推进 SOP](docs/AI产品项目推进SOP.docx) | 从需求分析到上线复盘的七阶段推进框架，包含流程图、阶段目标、关键产出物及评审要点 |
-| [AI 产品项目复盘指南](docs/AI产品项目复盘指南.docx) | 面向 AI 产品全生命周期的复盘框架，覆盖业务价值、数据、模型、Agent、评测、安全、成本与运营指标 |
-| [项目推进流程图](assets/ai_stage_flow.png) | 七阶段项目推进路径 |
-| [生命周期闭环图](assets/ai_lifecycle_flywheel.png) | 从业务目标到持续优化的反馈闭环 |
-
-## 图示预览
+这是一个脱敏后的 AI 产品项目作品集，展示我如何把“文档转项目”从模型能力验证推进到可评测、可交付的产品方案。仓库包括产品案例、Agent 架构、评测体系、可运行 Demo，以及由 Python 生成的项目推进与复盘文档。
 
 ![AI 产品项目七阶段推进流程](assets/ai_stage_flow.png)
 
-![AI 产品全生命周期闭环](assets/ai_lifecycle_flywheel.png)
+## 招聘方 3 分钟阅读路径
 
-## 核心思路
+1. 阅读 [项目案例复盘](docs/case-study.md)：了解业务问题、关键决策、版本结果与复盘。
+2. 阅读 [Agent 架构设计](docs/architecture.md)：了解为什么采用“Code 确定性生成 + LLM 语义质检”。
+3. 阅读 [评测与上线门槛](docs/evaluation.md)：了解自动评测、人工复核和灰度决策如何闭环。
+4. 运行 [公开 Demo](src/document_to_project_demo.py)：查看表格抽取结果如何映射为项目层级 JSON。
 
-1. **从文档到行动**：每个阶段都明确目标、输入、输出、协作角色与验收标准。
-2. **把 AI 特性纳入项目管理**：除传统功能测试外，增加准确性、稳定性、幻觉、权限、成本与人工介入等评估维度。
-3. **沉淀可复用资产**：将 PRD、AI Spec、Prompt/Context、评测集、监控指标和复盘结论纳入版本化管理。
-4. **文档工程化**：使用 Python 生成结构化 Word 文档及图示，减少重复排版并保证输出一致性。
+## 项目解决的问题
+
+业务团队常用表格维护项目计划、任务清单和活动排期，但迁移到项目管理工具时需要重复建项目、分组和录入任务。本项目将这条链路缩短为：
+
+```text
+上传业务文档
+  -> 解析表格事实
+  -> 生成结构化项目
+  -> 规则校验与 AI 质检
+  -> 用户预览、编辑、确认
+  -> 创建项目
+```
+
+产品目标不只是“模型能生成 JSON”，还包括：
+
+- 结构正确：项目、模块、卡片、任务层级稳定。
+- 结果可追溯：生成节点可以回到源表行和字段。
+- 体验可控制：支持预览、编辑、后台执行和结果恢复。
+- 质量可量化：自动指标与人工业务判断共同决定是否上线。
+- 失败可处理：明确 warnings、降级策略和人工确认边界。
+
+## 关键设计
+
+### 1. 确定性与智能能力分层
+
+全量任务由代码根据文档事实源生成，LLM 只负责语义质检、异常解释和有限修正，避免让模型反复重建整张表造成漏项、增项和名称漂移。
+
+### 2. 预览优先
+
+先生成可编辑的项目骨架，再由用户确认创建。相较完全依赖多轮对话，这种方式能降低等待焦虑，并让用户对 AI 结果保持控制。
+
+### 3. AI + 人工联合评测
+
+自动评测负责 schema 合规、节点覆盖率、字段命中率和稳定性；人工复核负责层级合理性、业务语义和真实可用性。自动高分不直接等于可上线。
+
+## 脱敏评测快照
+
+一次 v0.3 内部回归共覆盖 20 个不同复杂度样例：
+
+| 指标 | 结果 |
+| --- | ---: |
+| AI 自动评测平均分 | 89.5 / 100 |
+| 人工复核平均分 | 83.1 / 100 |
+| 人工结论 | 13 通过 / 2 有条件通过 / 5 不通过 |
+| 与上一版本共有的 10 个样例 | 人工均分 76.6 → 88.0 |
+| 平均生成耗时 | 40.1 秒 |
+
+这组数据暴露出一个重要问题：自动评测对 Card 分组、父子关系和业务可用性的识别仍偏乐观。因此版本结论是“继续修复和回归”，而不是只看平均分直接对外发布。详见 [评测与上线门槛](docs/evaluation.md)。
+
+## 公开 Demo
+
+Demo 不包含生产接口或客户数据，只复现项目中的核心工程思想：先通过确定性规则完成全量节点映射，再输出 warnings 供后续质检。
+
+```powershell
+python src/document_to_project_demo.py `
+  examples/sample_input.json `
+  --output examples/generated_project.json
+```
+
+运行测试：
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+Demo 输入是已抽取的表格行：
+
+```json
+{
+  "project_name": "新品发布计划",
+  "rows": [
+    {
+      "module": "筹备阶段",
+      "card": "内容准备",
+      "task": "完成发布文案",
+      "owner": "内容负责人",
+      "start_date": "2026-07-01",
+      "end_date": "2026-07-03"
+    }
+  ]
+}
+```
+
+输出为可消费的项目层级 JSON，并附带覆盖率、默认分组使用情况和日期异常等校验信息。
 
 ## 仓库结构
 
 ```text
 .
-├── assets/                      # 流程图与文档插图
-├── docs/                        # 可直接阅读的 Word 成品
+├── assets/                         # 流程图与文档插图
+├── docs/
+│   ├── case-study.md               # 项目案例与版本复盘
+│   ├── architecture.md             # Agent 分层与数据流
+│   ├── evaluation.md               # 评测指标与上线门槛
+│   ├── AI产品项目推进SOP.docx       # 可直接阅读的 Word 成品
+│   └── AI产品项目复盘指南.docx
+├── examples/                       # 脱敏输入与预期输出
 ├── src/
-│   ├── build_ai_product_sop.py  # 生成基础 SOP
-│   ├── add_stage_diagram.py     # 生成流程图并写入 SOP
-│   └── build_ai_project_retro.py# 生成复盘指南及生命周期图
+│   ├── document_to_project_demo.py # 公开可运行的映射 Demo
+│   └── build_*.py                  # Word 文档与图示生成脚本
+├── tests/
 ├── requirements.txt
 └── README.md
 ```
 
-## 本地生成
+## 文档工程化
 
-需要 Python 3.10 或更高版本。
-
-```bash
-python -m venv .venv
-```
-
-Windows：
+仓库中的 Word 文档和流程图可由 Python 重建：
 
 ```powershell
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python src/build_ai_product_sop.py
@@ -58,25 +131,11 @@ python src/add_stage_diagram.py
 python src/build_ai_project_retro.py
 ```
 
-macOS / Linux：
+生成结果写入 `docs/`，图示写入 `assets/`。
 
-```bash
-source .venv/bin/activate
-pip install -r requirements.txt
-python src/build_ai_product_sop.py
-python src/add_stage_diagram.py
-python src/build_ai_project_retro.py
-```
+## 边界说明
 
-生成结果会写入 `docs/`，图示会写入 `assets/`。
-
-## 可重点查看
-
-- 项目生命周期的阶段拆解与交付物设计
-- AI Spec、Agent 工具调用和安全边界的定义方式
-- 评测指标、上线门槛和持续监控体系
-- 使用 Python 与 `python-docx` 实现结构化文档生成
-
-## 说明
-
-仓库内容为通用方法论与脱敏示例，不包含原公司、客户或业务系统的内部代码与数据。文档与代码在 AI 辅助下完成，由作者负责需求定义、内容判断、结构设计、校验与最终交付。
+- 仓库为公开作品集，不包含原公司或客户的源文件、真实人员信息、内部域名、密钥、生产接口和完整后端代码。
+- 样例、名称和数据均已抽象或脱敏；公开 Demo 用于解释设计思路，不等同于生产系统源码。
+- 评测数据用于展示产品决策过程，不能代表所有文档类型和业务场景的普遍效果。
+- 内容与代码在 AI 辅助下完成，由作者负责需求定义、方案判断、结构设计、校验与最终交付。
