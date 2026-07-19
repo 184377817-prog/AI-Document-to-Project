@@ -1,7 +1,7 @@
-"""Deterministic, sanitized demo for mapping extracted table rows to project JSON.
+"""Deterministic mapping from normalized table rows to project JSON.
 
-This module starts after file parsing. It does not contain production APIs,
-customer schemas, model calls, or authentication logic.
+For a complete XLSX-to-JSON path, use excel_to_project_demo.py. Neither public
+demo contains production APIs, customer schemas, model calls, or authentication.
 """
 
 from __future__ import annotations

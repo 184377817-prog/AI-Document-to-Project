@@ -1,0 +1,21 @@
+case_id,tier,ai_score,ai_status,latency_seconds,human_score,human_status
+case-001,Tier 1,96.9,pass,33.6,43.3,fail
+case-002,Tier 1,100.0,pass,14.0,100.0,pass
+case-003,Tier 1,90.0,pass,15.7,100.0,pass
+case-004,Tier 2,88.0,pass,36.3,100.0,pass
+case-005,Tier 2,79.9,warning,22.7,75.7,conditional
+case-006,Tier 2,80.4,pass,14.3,67.0,fail
+case-007,Tier 2,98.0,pass,14.5,100.0,pass
+case-008,Tier 2,99.9,pass,8.3,84.5,pass
+case-009,Tier 2,97.8,pass,27.1,94.0,pass
+case-010,Tier 2,81.5,pass,31.5,58.9,fail
+case-011,Tier 2,97.8,pass,13.0,100.0,pass
+case-012,Tier 2,83.1,pass,66.2,51.2,fail
+case-013,Tier 2,92.1,pass,36.4,100.0,pass
+case-014,Tier 2,80.5,pass,15.1,91.2,pass
+case-015,Tier 2,96.8,pass,34.3,100.0,pass
+case-016,Tier 2,75.6,warning,17.1,38.2,fail
+case-017,Tier 3,96.0,pass,55.9,100.0,pass
+case-018,Tier 3,85.3,pass,20.5,100.0,pass
+case-019,Tier 3,89.8,pass,73.4,100.0,pass
+case-020,Tier 3,80.4,pass,252.5,58.9,conditional

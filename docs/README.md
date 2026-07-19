@@ -9,6 +9,17 @@
 | 1 | [项目案例复盘](01-case-study.md) | 业务问题、产品方案、关键决策、版本数据与复盘 |
 | 2 | [Agent 架构设计](02-architecture.md) | Code 与 LLM 分工、中间节点、校验和状态机 |
 | 3 | [评测与上线门槛](03-evaluation.md) | 自动评测、人工复核、复杂度分层和发布判断 |
+| 4 | [公开版 PRD](04-product-requirements.md) | 用户流程、功能需求、异常处理、埋点与验收标准 |
+| 5 | [公开版 AI Specification](05-ai-specification.md) | 输入输出契约、字段规则、Code/AI 边界与降级策略 |
+| 6 | [匿名评测报告](06-evaluation-report.md) | 逐样例证据、可复算指标、自动/人工分歧与版本决策 |
+
+## 可验证材料
+
+- [交互原型](../prototype/index.html)：演示上传、后台生成、预览与确认创建。
+- [示例 Excel](../demo/sample_project_plan.xlsx)：真实 `.xlsx` 输入。
+- [端到端转换脚本](../src/excel_to_project_demo.py)：从 Excel 读取到项目 JSON。
+- [匿名评测数据](../evaluation/anonymized_results.csv)：20 个样例的逐条结果。
+- [评测汇总脚本](../evaluation/summarize_results.py)：复算均分、通过分布和耗时。
 
 ## 可在线预览的成品
 

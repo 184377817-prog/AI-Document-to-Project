@@ -1,0 +1,45 @@
+{
+  "sample_count": 20,
+  "ai_score": {
+    "mean": 89.5,
+    "status_distribution": {
+      "pass": 18,
+      "warning": 2
+    }
+  },
+  "human_review": {
+    "mean": 83.1,
+    "status_distribution": {
+      "conditional": 2,
+      "fail": 5,
+      "pass": 13
+    }
+  },
+  "latency_seconds": {
+    "mean": 40.1,
+    "median": 24.9,
+    "p95_nearest_rank": 73.4,
+    "max": 252.5
+  },
+  "score_gap": {
+    "mean_ai_minus_human": 6.3,
+    "ai_pass_but_human_fail": 4
+  },
+  "by_tier": {
+    "Tier 1": {
+      "count": 3,
+      "ai_mean": 95.6,
+      "human_mean": 81.1
+    },
+    "Tier 2": {
+      "count": 13,
+      "ai_mean": 88.6,
+      "human_mean": 81.6
+    },
+    "Tier 3": {
+      "count": 4,
+      "ai_mean": 87.9,
+      "human_mean": 89.7
+    }
+  }
+}
