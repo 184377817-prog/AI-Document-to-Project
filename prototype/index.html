@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AI Document to Project · 交互原型</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #667085;
+      --line: #dce3ef;
+      --panel: #ffffff;
+      --soft: #f5f7fb;
+      --brand: #2563eb;
+      --brand2: #7c3aed;
+      --green: #16a06a;
+      --amber: #b45309;
+      --shadow: 0 22px 70px rgba(28, 45, 82, .18);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #eef2f8;
+      font: 14px/1.5 Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    button { font: inherit; }
+    .topbar {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      color: white;
+      background: linear-gradient(110deg, #111827, #273454);
+    }
+    .brand { display: flex; gap: 12px; align-items: center; font-weight: 800; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+    }
+    .prototype-note { color: #cbd5e1; font-size: 12px; }
+    .shell { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 56px); }
+    .sidebar {
+      padding: 20px 14px;
+      border-right: 1px solid var(--line);
+      background: #f8faff;
+    }
+    .workspace-name { padding: 0 10px 18px; font-size: 17px; font-weight: 800; }
+    .nav-label { padding: 18px 10px 7px; color: #98a2b3; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+    .nav-item {
+      width: 100%;
+      padding: 10px 12px;
+      text-align: left;
+      border: 0;
+      border-radius: 9px;
+      color: #475467;
+      background: transparent;
+    }
+    .nav-item.active { color: #1d4ed8; background: #e9f0ff; font-weight: 700; }
+    .main { padding: 28px; overflow: hidden; }
+    .page-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .page-head h1 { margin: 0; font-size: 24px; }
+    .page-head p { margin: 5px 0 0; color: var(--muted); }
+    .primary, .secondary, .text-btn {
+      cursor: pointer;
+      border-radius: 9px;
+      padding: 10px 16px;
+      border: 1px solid transparent;
+      font-weight: 700;
+    }
+    .primary { color: white; background: linear-gradient(110deg, var(--brand), var(--brand2)); }
+    .secondary { color: #344054; border-color: var(--line); background: white; }
+    .text-btn { color: var(--brand); background: transparent; }
+    .sheet {
+      min-width: 760px;
+      height: 570px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: white;
+      box-shadow: 0 10px 25px rgba(50, 65, 96, .07);
+    }
+    .sheet-toolbar {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      height: 52px;
+      padding: 0 15px;
+      border-bottom: 1px solid var(--line);
+    }
+    .sheet-tool { padding: 7px 10px; color: #475467; border-radius: 6px; }
+    .sheet-tool.active { color: #1d4ed8; background: #edf3ff; }
+    .formula { height: 36px; border-bottom: 1px solid var(--line); color: #98a2b3; padding: 8px 16px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { min-width: 120px; padding: 10px 12px; text-align: left; border: 1px solid #e7ebf2; white-space: nowrap; }
+    th { background: #f3f6fb; font-weight: 800; }
+    td:first-child, th:first-child { min-width: 55px; text-align: center; color: #98a2b3; background: #f8fafc; }
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      place-items: center;
+      padding: 30px;
+      background: rgba(15, 23, 42, .45);
+      backdrop-filter: blur(3px);
+    }
+    .modal-layer.active { display: grid; }
+    .dialog {
+      display: grid;
+      grid-template-columns: 210px minmax(0, 1fr);
+      width: min(1160px, 94vw);
+      height: min(760px, 90vh);
+      overflow: hidden;
+      border-radius: 18px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+    .dialog-side { padding: 22px 14px; color: #475467; background: #f6f8fc; border-right: 1px solid var(--line); }
+    .dialog-logo { display: flex; gap: 10px; align-items: center; padding: 0 8px 18px; font-weight: 800; }
+    .dialog-logo span { display: grid; place-items: center; width: 30px; height: 30px; color: white; border-radius: 9px; background: var(--brand); }
+    .side-section { margin: 17px 8px 7px; color: #98a2b3; font-size: 11px; font-weight: 800; }
+    .history { margin: 4px 0; padding: 9px 10px; border-radius: 8px; }
+    .history.current { color: #1d4ed8; background: #e9f0ff; }
+    .history small { display: block; color: #98a2b3; }
+    .dialog-main { min-width: 0; display: flex; flex-direction: column; }
+    .dialog-head {
+      height: 66px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--line);
+    }
+    .dialog-head strong { font-size: 18px; }
+    .pill { margin-left: auto; color: #475467; background: #f2f4f7; border-radius: 99px; padding: 5px 10px; font-size: 12px; }
+    .close { width: 32px; height: 32px; cursor: pointer; border: 0; border-radius: 8px; background: #f2f4f7; }
+    .view { display: none; min-height: 0; flex: 1; overflow: auto; }
+    .view.active { display: block; }
+    .upload-wrap { max-width: 760px; margin: 52px auto; padding: 0 28px; }
+    .eyebrow { color: #6d28d9; font-size: 12px; font-weight: 900; letter-spacing: .12em; }
+    .upload-wrap h2 { margin: 8px 0; font-size: 30px; }
+    .upload-wrap > p { color: var(--muted); font-size: 16px; }
+    .file-card {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin: 26px 0 16px;
+      padding: 18px;
+      border: 1px solid #bfd1ff;
+      border-radius: 12px;
+      background: #f4f7ff;
+    }
+    .file-icon { display: grid; place-items: center; width: 46px; height: 46px; color: white; border-radius: 11px; background: var(--green); font-weight: 900; }
+    .file-card strong { display: block; }
+    .file-card span { color: var(--muted); }
+    .scope { padding: 14px 16px; color: var(--amber); border: 1px solid #fed7aa; border-radius: 10px; background: #fff8ed; }
+    .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+    .progress-wrap { max-width: 720px; margin: 54px auto; padding: 0 28px; }
+    .progress-title { display: flex; align-items: center; gap: 16px; }
+    .spinner { width: 46px; height: 46px; border: 4px solid #dbeafe; border-top-color: var(--brand); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .track { height: 9px; margin: 28px 0; overflow: hidden; border-radius: 99px; background: #e8edf5; }
+    .fill { width: 18%; height: 100%; transition: width .5s; background: linear-gradient(90deg, #22c55e, var(--brand)); }
+    .stages { display: grid; gap: 10px; }
+    .stage { display: flex; align-items: center; gap: 12px; padding: 11px 13px; color: #98a2b3; border-radius: 9px; }
+    .stage i { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; background: #edf0f5; font-style: normal; }
+    .stage.done { color: var(--green); }
+    .stage.done i { color: white; background: var(--green); }
+    .stage.current { color: #1d4ed8; background: #eef4ff; font-weight: 700; }
+    .stage.current i { color: white; background: var(--brand); }
+    .preview-wrap { padding: 20px 22px 16px; }
+    .preview-head { display: flex; justify-content: space-between; align-items: center; }
+    .preview-head h2 { margin: 0; font-size: 22px; }
+    .preview-meta { color: var(--muted); }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+    .stat { padding: 13px; border: 1px solid var(--line); border-radius: 10px; background: #fbfcfe; }
+    .stat strong { display: block; font-size: 23px; }
+    .stat span { color: var(--muted); }
+    .warning { margin-bottom: 14px; padding: 10px 13px; color: #92400e; border-radius: 9px; background: #fff7e6; }
+    .board { display: grid; grid-template-columns: repeat(3, minmax(230px, 1fr)); gap: 12px; overflow-x: auto; }
+    .column { min-height: 300px; padding: 12px; border-radius: 11px; background: #f3f6fa; }
+    .column-head { display: flex; justify-content: space-between; margin-bottom: 11px; font-weight: 800; }
+    .column-head span { color: #98a2b3; font-size: 12px; }
+    .card { margin-bottom: 10px; padding: 13px; border: 1px solid #e2e7ef; border-radius: 9px; background: white; box-shadow: 0 3px 10px rgba(34, 52, 82, .05); }
+    .card strong { display: block; margin-bottom: 8px; }
+    .task { margin: 6px 0; color: #475467; }
+    .task::before { content: "□"; margin-right: 7px; color: #98a2b3; }
+    .bubble {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 12;
+      display: none;
+      width: 310px;
+      padding: 16px;
+      cursor: pointer;
+      border: 1px solid #cbd8f5;
+      border-radius: 13px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+    .bubble.active { display: block; }
+    .bubble strong { display: block; }
+    .bubble span { color: var(--muted); }
+    .bubble .track { margin: 10px 0 0; height: 6px; }
+    @media (max-width: 800px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 16px; }
+      .dialog { grid-template-columns: 1fr; }
+      .dialog-side { display: none; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">AI</span>Document to Project</div>
+    <span class="prototype-note">公开脱敏交互原型 · 非生产系统</span>
+  </header>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="workspace-name">协作工作台</div>
+      <div class="nav-label">工作空间</div>
+      <button class="nav-item">首页</button>
+      <button class="nav-item active">表格</button>
+      <button class="nav-item">项目</button>
+      <button class="nav-item">自动化</button>
+      <div class="nav-label">最近文件</div>
+      <button class="nav-item">市场活动排期.xlsx</button>
+      <button class="nav-item">内容发布计划.xlsx</button>
+    </aside>
+    <main class="main">
+      <div class="page-head">
+        <div><h1>市场活动排期.xlsx</h1><p>7 列 · 8 条任务 · 最近保存于 2 分钟前</p></div>
+        <button id="openGenerator" class="primary">✨ 一键转项目计划</button>
+      </div>
+      <div class="sheet">
+        <div class="sheet-toolbar"><span class="sheet-tool active">开始</span><span class="sheet-tool">插入</span><span class="sheet-tool">数据</span><span class="sheet-tool">协作</span><span class="sheet-tool">自动化</span></div>
+        <div class="formula">fx　市场活动排期</div>
+        <table>
+          <tr><th>#</th><th>模块</th><th>卡片</th><th>任务</th><th>负责人</th><th>开始日期</th><th>截止日期</th></tr>
+          <tr><td>1</td><td>筹备</td><td>内容准备</td><td>确认活动主题</td><td>产品负责人</td><td>2026-07-01</td><td>2026-07-02</td></tr>
+          <tr><td>2</td><td>筹备</td><td>内容准备</td><td>完成活动主文案</td><td>内容负责人</td><td>2026-07-02</td><td>2026-07-04</td></tr>
+          <tr><td>3</td><td>设计</td><td>视觉物料</td><td>输出主视觉方案</td><td>设计负责人</td><td>2026-07-03</td><td>2026-07-06</td></tr>
+          <tr><td>4</td><td>开发</td><td>页面搭建</td><td>完成活动落地页</td><td>开发负责人</td><td>2026-07-05</td><td>2026-07-10</td></tr>
+          <tr><td>5</td><td>上线</td><td>发布检查</td><td>核对渠道与链接</td><td>运营负责人</td><td>2026-07-11</td><td>2026-07-12</td></tr>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <div id="modal" class="modal-layer" role="dialog" aria-modal="true" aria-label="AI 创建项目">
+    <section class="dialog">
+      <aside class="dialog-side">
+        <div class="dialog-logo"><span>AI</span>创建项目</div>
+        <div class="side-section">当前流程</div>
+        <div class="history current">生成项目预览<small>等待开始</small></div>
+        <div class="side-section">最近任务</div>
+        <div class="history">内容发布计划.xlsx<small>今天 13:48 · 已完成</small></div>
+        <div class="history">季度复盘事项.xlsx<small>昨天 18:12 · 已完成</small></div>
+      </aside>
+      <div class="dialog-main">
+        <header class="dialog-head"><strong>AI 创建项目</strong><span class="pill">来自当前工作簿</span><button id="closeModal" class="close" aria-label="关闭">×</button></header>
+        <section id="uploadView" class="view active">
+          <div class="upload-wrap">
+            <div class="eyebrow">PREVIEW FIRST</div>
+            <h2>将 Excel 转换为可校对的项目计划</h2>
+            <p>系统会先生成项目、模块、卡片和任务预览。确认前不会写入正式项目。</p>
+            <div class="file-card"><div class="file-icon">X</div><div><strong>市场活动排期.xlsx</strong><span>识别到 1 个工作表、8 条候选任务</span></div></div>
+            <div class="scope">能力提示：标准任务清单可稳定处理；复杂甘特图、图片和颜色语义需要人工确认。</div>
+            <div class="actions"><button id="cancelUpload" class="secondary">取消</button><button id="startGeneration" class="primary">生成项目预览</button></div>
+          </div>
+        </section>
+        <section id="progressView" class="view">
+          <div class="progress-wrap">
+            <div class="progress-title"><div class="spinner"></div><div><h2 id="progressTitle">正在解析工作簿</h2><p>可以最小化窗口，后台任务不会中断。</p></div></div>
+            <div class="track"><div id="progressFill" class="fill"></div></div>
+            <div id="stages" class="stages">
+              <div class="stage current"><i>1</i>解析工作簿</div>
+              <div class="stage"><i>2</i>识别表头与结构</div>
+              <div class="stage"><i>3</i>生成项目层级</div>
+              <div class="stage"><i>4</i>规则校验与质量提示</div>
+              <div class="stage"><i>5</i>准备预览</div>
+            </div>
+            <div class="actions"><button id="minimize" class="secondary">最小化到后台</button></div>
+          </div>
+        </section>
+        <section id="previewView" class="view">
+          <div class="preview-wrap">
+            <div class="preview-head"><div><h2>市场活动排期项目</h2><div class="preview-meta">来源：市场活动排期.xlsx · 生成耗时：38 秒</div></div><button id="regenerate" class="secondary">重新生成</button></div>
+            <div class="stats"><div class="stat"><strong>1</strong><span>项目</span></div><div class="stat"><strong>4</strong><span>模块</span></div><div class="stat"><strong>5</strong><span>卡片</span></div><div class="stat"><strong>8</strong><span>任务</span></div></div>
+            <div class="warning">⚠ 1 条需确认：第 8 行未填写卡片，已放入“任务清单”。</div>
+            <div class="board">
+              <div class="column"><div class="column-head">筹备 <span>3 个任务</span></div><div class="card"><strong>内容准备</strong><div class="task">确认活动主题</div><div class="task">完成活动主文案</div><div class="task">整理渠道清单</div></div></div>
+              <div class="column"><div class="column-head">设计与开发 <span>3 个任务</span></div><div class="card"><strong>视觉物料</strong><div class="task">输出主视觉方案</div><div class="task">适配渠道尺寸</div></div><div class="card"><strong>页面搭建</strong><div class="task">完成活动落地页</div></div></div>
+              <div class="column"><div class="column-head">上线 <span>2 个任务</span></div><div class="card"><strong>发布检查</strong><div class="task">核对渠道与链接</div></div><div class="card"><strong>任务清单</strong><div class="task">汇总活动数据</div></div></div>
+            </div>
+            <div class="actions"><button class="secondary">编辑结构</button><button id="confirmCreate" class="primary">确认创建项目</button></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+  <div id="bubble" class="bubble"><strong id="bubbleTitle">项目预览生成中</strong><span id="bubbleSub">点击恢复查看进度</span><div class="track"><div id="bubbleFill" class="fill"></div></div></div>
+
+  <script>
+    const modal = document.getElementById("modal");
+    const bubble = document.getElementById("bubble");
+    const views = ["uploadView", "progressView", "previewView"];
+    const stageLabels = ["正在解析工作簿", "正在识别表头与结构", "正在生成项目层级", "正在执行规则校验", "正在准备预览"];
+    let timer = null;
+    let step = 0;
+    let ready = false;
+
+    function showView(id) {
+      views.forEach(name => document.getElementById(name).classList.toggle("active", name === id));
+    }
+    function openModal() {
+      modal.classList.add("active");
+      bubble.classList.remove("active");
+      showView(ready ? "previewView" : "uploadView");
+    }
+    function renderProgress() {
+      const stages = [...document.querySelectorAll(".stage")];
+      stages.forEach((item, index) => {
+        item.classList.toggle("done", index < step);
+        item.classList.toggle("current", index === step);
+        item.querySelector("i").textContent = index < step ? "✓" : index + 1;
+      });
+      const percent = Math.min(100, 18 + step * 20);
+      document.getElementById("progressFill").style.width = percent + "%";
+      document.getElementById("bubbleFill").style.width = percent + "%";
+      document.getElementById("progressTitle").textContent = stageLabels[Math.min(step, 4)];
+    }
+    function startGeneration() {
+      clearInterval(timer);
+      ready = false;
+      step = 0;
+      showView("progressView");
+      renderProgress();
+      timer = setInterval(() => {
+        step += 1;
+        if (step >= 5) {
+          clearInterval(timer);
+          ready = true;
+          bubble.querySelector("#bubbleTitle").textContent = "项目预览已生成";
+          bubble.querySelector("#bubbleSub").textContent = "点击查看并确认结果";
+          if (modal.classList.contains("active")) showView("previewView");
+          return;
+        }
+        renderProgress();
+      }, 650);
+    }
+
+    document.getElementById("openGenerator").onclick = openModal;
+    document.getElementById("closeModal").onclick = () => modal.classList.remove("active");
+    document.getElementById("cancelUpload").onclick = () => modal.classList.remove("active");
+    document.getElementById("startGeneration").onclick = startGeneration;
+    document.getElementById("regenerate").onclick = startGeneration;
+    document.getElementById("minimize").onclick = () => { modal.classList.remove("active"); bubble.classList.add("active"); };
+    bubble.onclick = openModal;
+    document.getElementById("confirmCreate").onclick = function () {
+      this.textContent = "✓ 已创建，可进入项目";
+      this.style.background = "#16a06a";
+    };
+  </script>
+</body>
+</html>

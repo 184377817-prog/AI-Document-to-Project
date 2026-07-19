@@ -6,6 +6,7 @@ Thumbs.db
 qa/
 build/
 output/
+node_modules/
 docs/source/*.clean.docx
 .env
 .env.*
@@ -17,3 +18,4 @@ docs/source/*.clean.docx
 credentials.json
 secrets/
 examples/generated_project.json
+demo/generated_project.json
