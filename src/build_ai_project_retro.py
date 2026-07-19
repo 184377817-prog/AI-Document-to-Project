@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-OUT = PROJECT_ROOT / "docs" / "AI产品项目复盘指南.docx"
+OUT = PROJECT_ROOT / "docs" / "source" / "AI产品项目复盘指南.docx"
 DIAGRAM = PROJECT_ROOT / "assets" / "ai_lifecycle_flywheel.png"
 OUT.parent.mkdir(parents=True, exist_ok=True)
 DIAGRAM.parent.mkdir(parents=True, exist_ok=True)

@@ -8,9 +8,11 @@
 
 ## 招聘方 3 分钟阅读路径
 
-1. 阅读 [项目案例复盘](docs/case-study.md)：了解业务问题、关键决策、版本结果与复盘。
-2. 阅读 [Agent 架构设计](docs/architecture.md)：了解为什么采用“Code 确定性生成 + LLM 语义质检”。
-3. 阅读 [评测与上线门槛](docs/evaluation.md)：了解自动评测、人工复核和灰度决策如何闭环。
+1. 打开 [文档中心](docs/README.md)：按推荐顺序浏览全部材料。
+2. 阅读 [项目案例复盘](docs/01-case-study.md)：了解业务问题、关键决策、版本结果与复盘。
+3. 阅读 [Agent 架构设计](docs/02-architecture.md)：了解为什么采用“Code 确定性生成 + LLM 语义质检”。
+4. 阅读 [评测与上线门槛](docs/03-evaluation.md)：了解自动评测、人工复核和灰度决策如何闭环。
+5. 运行 [公开 Demo](src/document_to_project_demo.py)：查看表格抽取结果如何映射为项目层级 JSON。
 4. 运行 [公开 Demo](src/document_to_project_demo.py)：查看表格抽取结果如何映射为项目层级 JSON。
 
 ## 项目解决的问题
@@ -60,7 +62,7 @@
 | 与上一版本共有的 10 个样例 | 人工均分 76.6 → 88.0 |
 | 平均生成耗时 | 40.1 秒 |
 
-这组数据暴露出一个重要问题：自动评测对 Card 分组、父子关系和业务可用性的识别仍偏乐观。因此版本结论是“继续修复和回归”，而不是只看平均分直接对外发布。详见 [评测与上线门槛](docs/evaluation.md)。
+这组数据暴露出一个重要问题：自动评测对 Card 分组、父子关系和业务可用性的识别仍偏乐观。因此版本结论是“继续修复和回归”，而不是只看平均分直接对外发布。详见 [评测与上线门槛](docs/03-evaluation.md)。
 
 ## 公开 Demo
 
@@ -104,11 +106,12 @@ Demo 输入是已抽取的表格行：
 .
 ├── assets/                         # 流程图与文档插图
 ├── docs/
-│   ├── case-study.md               # 项目案例与版本复盘
-│   ├── architecture.md             # Agent 分层与数据流
-│   ├── evaluation.md               # 评测指标与上线门槛
-│   ├── AI产品项目推进SOP.docx       # 可直接阅读的 Word 成品
-│   └── AI产品项目复盘指南.docx
+│   ├── README.md                   # 文档导航与格式说明
+│   ├── 01-case-study.md            # 项目案例与版本复盘
+│   ├── 02-architecture.md          # Agent 分层与数据流
+│   ├── 03-evaluation.md            # 评测指标与上线门槛
+│   ├── guides/                     # GitHub 可在线预览的 PDF
+│   └── source/                     # 可下载编辑的 Word 源文件
 ├── examples/                       # 脱敏输入与预期输出
 ├── src/
 │   ├── document_to_project_demo.py # 公开可运行的映射 Demo
@@ -131,7 +134,9 @@ python src/add_stage_diagram.py
 python src/build_ai_project_retro.py
 ```
 
-生成结果写入 `docs/`，图示写入 `assets/`。
+Word 生成结果写入 `docs/source/`，图示写入 `assets/`。仓库同时在 `docs/guides/` 提供经过逐页检查的 PDF，方便直接在线预览。
+
+> GitHub 不支持在代码页面直接渲染 `.docx`，因此 Word 文件页面只会显示 `View raw`；这不表示文档为空。需要在线阅读时请打开 PDF，需要编辑时再下载 Word 源文件。
 
 ## 边界说明
 

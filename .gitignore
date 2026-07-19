@@ -5,8 +5,8 @@ __pycache__/
 Thumbs.db
 qa/
 build/
-docs/*.clean.docx
-docs/AI产品项目标准推进SOP.docx
+output/
+docs/source/*.clean.docx
 .env
 .env.*
 !.env.example

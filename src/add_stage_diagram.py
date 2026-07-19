@@ -2,7 +2,7 @@ from pathlib import Path
 from shutil import copyfile
 
 from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC = PROJECT_ROOT / "build" / "AI产品项目标准推进SOP.docx"
-OUT = PROJECT_ROOT / "docs" / "AI产品项目推进SOP.docx"
+OUT = PROJECT_ROOT / "docs" / "source" / "AI产品项目推进SOP.docx"
 IMG = PROJECT_ROOT / "assets" / "ai_stage_flow.png"
 OUT.parent.mkdir(parents=True, exist_ok=True)
 IMG.parent.mkdir(parents=True, exist_ok=True)
@@ -196,9 +196,6 @@ def insert_diagram():
 
     caption_para = paragraph_after(pic_para)
     add_caption(caption_para, "图 1：AI 产品项目 7 阶段推进流程")
-
-    break_para = paragraph_after(caption_para)
-    break_para.add_run().add_break(WD_BREAK.PAGE)
 
     for p in doc.paragraphs:
         if p.text.strip() == "四、历史经验":
